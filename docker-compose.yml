@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:12.4
+    container_name: postgres-django
+    ports:
+      - 0.0.0.0:5432:5432
+    volumes:
+      # - ./data/postgres:/var/lib/postgresql
+      - $PWD/docker/postgres/init.d:/docker-entrypoint-initdb.d
+      - $PWD/docker/postgres/pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DATABASE: django
+      POSTGRES_USER: django
+      POSTGRES_PASSWORD: django
+
+  web:
+    container_name: django
+    build: .
+    volumes:
+      - $PWD/docker/django:/code
+    tty: true
+    ports:
+      - 0.0.0.0:8000:8000
+    depends_on:
+      - db
